@@ -99,7 +99,7 @@ kotlin.sourceSets {
             runtimeOnly(project(":ktor-client:ktor-client-cio"))
             runtimeOnly(project(":ktor-client:ktor-client-android"))
             runtimeOnly(project(":ktor-client:ktor-client-okhttp"))
-            if (KtorBuildProperties.currentJdk >= 11) {
+            if (currentJdk >= 11) {
                 runtimeOnly(project(":ktor-client:ktor-client-java"))
             }
         }
@@ -169,6 +169,7 @@ rootProject.allprojects {
     configure(tasks) {
         dependsOn(startTestServer)
         kotlin.sourceSets {
+
             if (!(rootProject.ext.get("native_targets_enabled") as Boolean)) {
                 return@sourceSets
             }
@@ -196,6 +197,17 @@ rootProject.allprojects {
             }
         }
     }
+}
+
+tasks.getByName("jvmTest").apply {
+    check(this is Test)
+
+    val javaToolchains = project.extensions.getByType<JavaToolchainService>()
+    javaLauncher.set(
+        javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(11))
+        }
+    )
 }
 
 gradle.buildFinished {
