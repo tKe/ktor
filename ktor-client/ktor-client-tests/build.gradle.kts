@@ -199,16 +199,7 @@ rootProject.allprojects {
     }
 }
 
-tasks.getByName("jvmTest").apply {
-    check(this is Test)
-
-    val javaToolchains = project.extensions.getByType<JavaToolchainService>()
-    javaLauncher.set(
-        javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(11))
-        }
-    )
-}
+useJdkVersionForJvmTests(11)
 
 gradle.buildFinished {
     if (startTestServer.server != null) {

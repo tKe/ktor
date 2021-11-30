@@ -3,6 +3,9 @@
  */
 
 import org.gradle.api.*
+import org.gradle.api.tasks.testing.*
+import org.gradle.jvm.toolchain.*
+import org.gradle.kotlin.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 
 /*
@@ -78,3 +81,17 @@ val currentJdk = if (versionComponents[0] == 1) versionComponents[1] else versio
 val jdk11Modules = listOf(
     "ktor-client-java"
 )
+
+fun Project.useJdkVersionForJvmTests(version: Int) {
+    tasks.getByName("jvmTest").apply {
+        check(this is Test)
+
+        val javaToolchains = project.extensions.getByType<JavaToolchainService>()
+        javaLauncher.set(
+            javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(version))
+            }
+        )
+    }
+
+}
