@@ -85,8 +85,12 @@ public fun <PluginConfigT : Any> createRouteScopedPlugin(
         pipeline: ApplicationCallPipeline,
         configure: PluginConfigT.() -> Unit
     ): PluginInstance {
-        check(pipeline is Route)
-        return createPluginInstance(pipeline.application, pipeline, body, createConfiguration, configure)
+        val application = when (pipeline) {
+            is Application -> pipeline
+            is Route -> pipeline.application
+            else -> throw IllegalArgumentException("RouteScopedPlugin can be installed only to Application or Route")
+        }
+        return createPluginInstance(application, pipeline, body, createConfiguration, configure)
     }
 }
 
