@@ -30,6 +30,7 @@ public object ConfigKeys {
     public const val hostSslKeyStorePassword: String = "ktor.security.ssl.keyStorePassword"
     public const val hostSslPrivateKeyPassword: String = "ktor.security.ssl.privateKeyPassword"
     public const val developmentModeKey: String = "ktor.development"
+    public const val shutdownHookKey: String = "ktor.engine.shutdownHook"
 }
 
 /**

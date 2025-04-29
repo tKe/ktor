@@ -5,6 +5,7 @@
 package io.ktor.server.engine
 
 import io.ktor.server.application.ApplicationStarting
+import io.ktor.server.config.tryGetString
 
 internal expect val SHUTDOWN_HOOK_ENABLED: Boolean
 
@@ -18,7 +19,10 @@ internal expect val SHUTDOWN_HOOK_ENABLED: Boolean
  * [Report a problem](https://ktor.io/feedback/?fqname=io.ktor.server.engine.addShutdownHook)
  */
 public fun EmbeddedServer<*, *>.addShutdownHook(stop: () -> Unit) {
-    if (SHUTDOWN_HOOK_ENABLED) {
+    val shutdownHookEnabled = environment.config.tryGetString(ConfigKeys.shutdownHookKey)
+        ?.toBoolean() ?: SHUTDOWN_HOOK_ENABLED
+
+    if (shutdownHookEnabled) {
         monitor.subscribe(ApplicationStarting) { platformAddShutdownHook(stop) }
     }
 }
